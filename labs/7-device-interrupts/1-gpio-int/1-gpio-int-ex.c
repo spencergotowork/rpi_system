@@ -22,7 +22,18 @@ void interrupt_vector(unsigned pc) {
     //  - increment n_falling_edge if it was a falling edge
     //  - increment n_rising_edge if it was rising, 
     // make sure you clear the GPIO event!
-    unimplemented();
+    // unimplemented();
+    int flag = gpio_event_detected(in_pin);
+    if(flag) {
+        if(GET32(0x20200034) & (1 << in_pin)) {
+            n_rising_edge++;
+        }
+        else {
+            n_falling_edge++;
+        }
+    }
+    gpio_event_clear(in_pin);
+    // printk("here is 37!\n");
 }
 
 static void test1_simple_rise(unsigned t) {

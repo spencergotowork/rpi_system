@@ -66,7 +66,8 @@ mbox_write(unsigned channel, volatile void *data) {
     dev_barrier();
 
     // 2. if mbox status is full, wait.
-    unimplemented();
+    // unimplemented();
+    while(GET32(MBOX_STATUS) == MAILBOX_FULL){;}
 
     // 3. write out the data along with the channel
 	PUT32(MBOX_WRITE, uncached(data) | channel);
@@ -83,11 +84,13 @@ mbox_read(unsigned channel) {
     dev_barrier();
 
     // 2. while mailbox is empty, wait.
-    unimplemented();
+    // unimplemented();
+    while(GET32(MBOX_STATUS) == MAILBOX_EMPTY){;}
 
     // 3. read from mailbox and check that the channel is set.
-    uint32_t v = 0;
-    unimplemented();
+    uint32_t v = GET32(MBOX_READ);
+    // unimplemented();
+
 
     // 4. verify that the reply is for <channel>
     if((v & 0xf) != channel)

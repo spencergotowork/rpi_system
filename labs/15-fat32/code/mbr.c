@@ -7,11 +7,16 @@ mbr_t *mbr_read() {
 
   // TODO: Read the MBR into a heap-allocated buffer.  Use `pi_sd_read` or
   // `pi_sec_read` to read 1 sector from LBA 0 into memory.
-  unimplemented();
+  // unimplemented();
+  // struct mbr *mbr = pi_sec_read(0, 1);
+  struct mbr *mbr = kmalloc(512);
+  pi_sd_read(mbr, 0, 1);
 
   // TODO: Verify that the MBR is valid. (see mbr_check)
-  unimplemented();
+  // unimplemented();
+  mbr_check(mbr);
 
   // TODO: Return the MBR.
-  unimplemented();
+  // unimplemented();
+  return mbr;
 }

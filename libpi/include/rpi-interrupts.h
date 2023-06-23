@@ -48,6 +48,13 @@ static inline void cpsr_set(uint32_t cpsr) {
     asm volatile("msr cpsr, %0" :: "r"(cpsr));
 }
 
+static inline uint32_t spsr_get(void) {
+    uint32_t spsr = 0;
+    asm volatile("mrs %0,spsr" : "=r"(spsr));
+    return spsr;
+}
+
+
 // check if interrupts are enabled.
 static inline int int_is_enabled(void) {
     // 7ths bit = 1 ===> disabled.

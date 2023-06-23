@@ -13,6 +13,7 @@
 //    - 1 section of heap (starting at one MB: 0x100000)
 //    - 3 sections of GPIO ( 0x20000000 ---  0x20200000)
 #include "vm-ident.h"
+#include "vector-base.h"
 
 // do one time initialization of MMU, setup identity mappings, and start
 // running in mmu
@@ -38,11 +39,14 @@ fld_t * vm_ident_mmu_init(int start_p) {
     staff_mmu_map_section(pt, 0x20200000, 0x20200000, dom_id);
 
     // setup user stack (note: grows down!)
-    unimplemented();
+    // unimplemented();
+    staff_mmu_map_section(pt, STACK_ADDR-OneMB, STACK_ADDR-OneMB, dom_id);
 
     // setup interrupt stack (note: grows down!)
     // if we don't do this, then the first exception = bad infinite loop
-    unimplemented();
+    // unimplemented();
+    // vector_base_set((void *)INT_STACK_ADDR);
+    staff_mmu_map_section(pt, INT_STACK_ADDR-OneMB, INT_STACK_ADDR-OneMB, dom_id);
 
     // 3. install fault handler to catch if we make mistake.
     mmu_install_handlers();

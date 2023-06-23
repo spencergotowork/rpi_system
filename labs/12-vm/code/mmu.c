@@ -115,10 +115,11 @@ void mmu_map_sections(fld_t *pt, unsigned va, unsigned pa, unsigned nsec, uint32
 // lookup va in pt and return the pte entry.
 fld_t * mmu_lookup_section(fld_t *pt, unsigned va) {
     assert(mod_pow2(va, 20));
-    fld_t *pte = 0;
+    // fld_t *pte = 0;
 
-
-    unimplemented();
+    // unimplemented();
+    unsigned index = va >> 20;
+    fld_t *pte = &pt[index];
 
     // for today: tag should be set.  in the future you'd return 0.
     demand(pte->tag, invalid section);
@@ -149,10 +150,13 @@ void mmu_init(void) {
 
     // trivial: RMW the xp bit in control reg 1.
     // leave mmu disabled.
-    unimplemented();
+    // unimplemented();
 
     // make sure write succeeded.
     struct control_reg1 c1 = cp15_ctrl_reg1_rd();
+    c1.XP_pt = 1;
+    cp15_ctrl_reg1_wr(c1);
+
     assert(c1.XP_pt);
     assert(!c1.MMU_enabled);
 }
@@ -160,7 +164,8 @@ void mmu_init(void) {
 #include "vector-base.h"
 
 void mmu_install_handlers(void) {
-    unimplemented();
+    // unimplemented();
+    int_init();
 }
 
 // set f->sec_base_addr correctly: called by <mmu_map_section>
@@ -168,7 +173,8 @@ static void fld_set_base_addr(fld_t *f, unsigned addr) {
     // 20 b/c we have 1MB sections.
     demand(mod_pow2(addr,20), addr is not aligned!);
 
-    unimplemented();
+    // unimplemented();
+    f->sec_base_addr = addr >> 20;
 
     // if the previous code worked, this should always succeed.
     assert((f->sec_base_addr << 20) == addr);
@@ -202,7 +208,10 @@ fld_t * mmu_map_section(fld_t *pt, uint32_t va, uint32_t pa, uint32_t dom) {
 
 // read and return the domain access control register
 uint32_t domain_access_ctrl_get(void) {
-    unimplemented();
+    // unimplemented();
+    uint32_t r;
+    asm volatile ("mrc p15, 0, %0, c3, c0, 0" : "=r" (r));
+    return r;
 }
 
 // b4-42

@@ -26,12 +26,14 @@ static inline int brkpt_is_enabled0(void)
     { return cp14_bcr0_is_enabled(); }
 
 // enable breakpoint 0
-static inline void brkpt_enable0(void) 
-    { unimplemented(); }
+static inline void brkpt_enable0(void) { 
+    // unimplemented();
+    cp14_bcr0_enable();
+}
 
 // disable breakpoint 0
 static inline void brkpt_disable0(void) 
-    { unimplemented(); }
+    { cp14_bcr0_disable(); }
 
 // if the current fault is a breakpoint, return 1
 static inline int fault_is_brkpt(void) 
@@ -51,12 +53,16 @@ static inline int watchpt_is_enabled0(void)
     { return cp14_wcr0_is_enabled(); }
 
 // enable watchpoint 0
-static inline void watchpt_enable0(void) 
-    { unimplemented(); }
+static inline void watchpt_enable0(void) { 
+    // unimplemented(); 
+    cp14_wcr0_enable();
+}
 
 // disable watchpoint 0
-static inline void watchpt_disable0(void) 
-    { unimplemented(); }
+static inline void watchpt_disable0(void) { 
+    // unimplemented(); 
+    cp14_wcr0_disable();
+}
 
 // if the current fault is a watchpoint, return 1
 static inline int fault_is_watchpt(void) 

@@ -39,7 +39,10 @@ void data_abort_vector(unsigned lr) {
 
 // setup handlers: enable cp14
 void debug_fault_init(void) {
-    unimplemented();
+    // unimplemented();
+    extern uint32_t _interrupt_table;
+    vector_base_set(&_interrupt_table);
+    cp14_enable();
 
     // just started, should not be enabled.
     assert(!cp14_bcr0_is_enabled());
@@ -48,7 +51,10 @@ void debug_fault_init(void) {
 
 // set a breakpoint on <addr>: call <h> when triggers.
 void brkpt_set0(uint32_t addr, bfault_handler_t h) {
-    unimplemented();
+    // unimplemented();
+    brkpt_disable0();
+    cp14_bvr0_set(addr);
+    brkpt_enable0();
 
     assert(cp14_bcr0_is_enabled());
     brkpt_handler = h;
@@ -56,8 +62,10 @@ void brkpt_set0(uint32_t addr, bfault_handler_t h) {
 
 // set a watchpoint on <addr>: call handler <h> when triggers.
 void watchpt_set0(uint32_t addr, wfault_handler_t h) {
-    unimplemented();
-
+    // unimplemented();
+    cp14_wvr0_set(addr);
+    watchpt_enable0();
+    cp14_wcr0_set(bits_set(cp14_wcr0_get(), 5, 8, 1 << (addr % 4)));
 
     assert(cp14_wcr0_is_enabled());
     watchpt_handler = h;

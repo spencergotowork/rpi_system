@@ -76,11 +76,18 @@ static void boot_putk(const char *msg) {
 static unsigned 
 has_data_timeout(unsigned timeout) {
     // implement this!
+    uint32_t start = timer_get_usec();
+    while((timer_get_usec() - start) < timeout) {
+        if(boot_has_data()) return 1;
+    }
     return 0;
 }
 
 // implement this routine.
 static void wait_for_data(unsigned usec_timeout) {
+    do {
+        boot_put32(GET_PROG_INFO);
+    }while(!has_data_timeout(usec_timeout));
 }
 
 // IMPLEMENT this routine.
@@ -94,29 +101,51 @@ static inline long get_code(void) {
     /****************************************************************
      * Add your code below: 2,3,4,5,6
      */
-    long addr = 0;
+    // long addr = 0;
 
 
     // 2. expect: [PUT_PROG_INFO, addr, nbytes, cksum] 
     //    we echo cksum back in step 4 to help debugging.
-
-
+    if(boot_get32() != PUT_PROG_INFO) {
+        boot_putk("have not receive PUT_PROG_INFO");
+        return 0;
+    }
+    long addr=boot_get32();
+    long nbytes=boot_get32();
+    long cksum=boot_get32();
+    
     // 3. If the binary will collide with us, abort. 
     //    you can assume that code must be below where the booloader code
     //    gap starts.
-
+    if(addr + nbytes > BOOT_START) {
+        boot_putk("send program runs over the boot start");
+        boot_put32(BAD_CODE_ADDR);
+        return 0;
+    }
 
 
     // 4. send [GET_CODE, cksum] back.
-
+    boot_put32(GET_CODE);
+    boot_put32(cksum);
 
     // 5. expect: [PUT_CODE, <code>]
     //  read each sent byte and write it starting at 
     //  <addr> using PUT8
+    if(boot_get32() != PUT_CODE) {
+        boot_putk("pi did not receive PUT_CODE");
+        return 0;
+    }
+    for(unsigned index=0;index<nbytes;index++) {
+        PUT8(addr+index, boot_get8());
+    }
 
 
     // 6. verify the cksum of the copied code.
-
+    if(crc32((const void *)addr, nbytes)!=cksum) {
+        boot_putk("bad cksum");
+        boot_put32(BAD_CODE_CKSUM);
+        return 0;
+    }
     // 7. send back a BOOT_SUCCESS!
     boot_putk("<YOUR NAME HERE>: success: Received the program!\n");
     boot_put32(BOOT_SUCCESS);

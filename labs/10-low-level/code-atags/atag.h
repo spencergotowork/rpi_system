@@ -40,7 +40,12 @@ static inline atag_t atag_next(atag_t a)
 
 // look up <tag> and return a pointer to its data.
 static const void *atag_lookup(unsigned tag) {
-    unimplemented();
+    // unimplemented();
+    for(atag_t a=atag_first(); !atag_done(a); a = atag_next(a)) {
+        if(atag_tag(a) == tag) 
+            return atag_data(a);
+    }
+    panic("can not find the atag using atag_lookup\n");
 }
 
 static unsigned atag_memsize(void) {

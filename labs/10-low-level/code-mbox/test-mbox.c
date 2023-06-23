@@ -13,7 +13,7 @@ void notmain(void) {
     // if you want to try to set the CPU frequency.  i couldn't get the
     // measured cpu speed to go up, however.
 
-#if 0
+#if 1
     uint32_t curhz = rpi_clock_curhz_get(0x3);   
     uint32_t maxhz = rpi_clock_maxhz_get(0x3);   
 
@@ -28,6 +28,6 @@ void notmain(void) {
     output("new hz=%d [mbox=%d]\n", newhz, rpi_clock_curhz_get(3)); 
 #endif
     // some other useful things.
- //   output("board model = 0x%x\n", rpi_get_model());
-//    output("board revision= 0x%x\n", rpi_get_revision());
+   output("board model = 0x%x\n", rpi_get_model());
+   output("board revision= 0x%x\n", rpi_get_revision());
 }

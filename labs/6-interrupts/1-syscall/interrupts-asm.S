@@ -89,13 +89,26 @@ software_interrupt_asm:
     @ runs at system level (p.a2-5): assumes we have a sp
     @ implement: 
     @   - save regs
+    push {r1-r12, lr}
+
     @   - need to figure out what lr points to,
+    @ need to know, Assembly line
+    sub lr, lr, #4
+
     @   - mov the original r0 into r1
+    mov r1, r0
+
     @   - mov the pointer to the syscall inst into r0
+    mov r0, lr
+
     @   - call
+    bl syscall_vector
+
     @   - restore regs
+    pop {r1-r12, lr}
+
     @   - return from the exception.
-    asm_not_implemented()
+    @ asm_not_implemented()
     movs pc, lr
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@

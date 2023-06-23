@@ -13,4 +13,5 @@ void notmain(void) {
         gpio_set_off(led);
         delay(1000000);
     }
+    reboot();
 }

@@ -60,9 +60,9 @@ GET32:
 
 @ jump to the address in r0.  we don't mess w/ link register
 @ so called routine will return to our caller.
-.globl BRANCHTO
-BRANCHTO:
-    bx r0
+@.globl BRANCHTO
+@BRANCHTO:
+@    bx r0
 
 #ifdef RPI_FP_ENABLED
 

@@ -5,6 +5,7 @@
 
 void a(void);
 void notmain(void) {
+    output("the fp is %x\n", __builtin_frame_address (0));
     a();
 }
 
@@ -28,7 +29,7 @@ static void pop(const char *msg) {
 
 #define gen_fn(x,y)                                             \
     void y (void);                                              \
-    void x (void) { push(MK_STR(y)); y(); pop(MK_STR(y)); }
+    void x (void) { push(MK_STR(y)); output("the fp is %x\n", __builtin_frame_address (0)); y(); pop(MK_STR(y)); }
 
 void f(void);
 

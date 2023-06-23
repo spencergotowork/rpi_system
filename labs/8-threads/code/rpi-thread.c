@@ -97,7 +97,13 @@ rpi_thread_t *rpi_fork(void (*code)(void *arg), void *arg) {
      *  3. store the address of rpi_init_trampoline into the lr
      *     position so context switching will jump there.
      */
-    unimplemented();
+    // unimplemented();
+    // rpi_thread size is 8216
+    // 8184 = 1ff8
+    t->saved_sp = &t->stack[THREAD_MAXSTACK - 10];
+    t->saved_sp[0] = (uint32_t)arg;
+    t->saved_sp[1] = (uint32_t)code;
+    t->saved_sp[LR_OFFSET] = (uint32_t)rpi_init_trampoline;
 
     trace("rpi_fork: tid=%d, code=%p, arg=%x, saved_sp=%p\n",
             t->tid, code, arg, t->saved_sp);
@@ -115,7 +121,17 @@ void rpi_exit(int exitcode) {
     // when you switch back to the scheduler thread:
     //      trace("rpi_exit: done running threads, back to scheduler\n");
 
-    unimplemented();
+    Q_append(&freeq, cur_thread);
+    rpi_thread_t *old = cur_thread;
+    cur_thread = Q_pop(&runq);
+    
+    if(cur_thread) {
+        rpi_cswitch(&old->saved_sp, cur_thread->saved_sp);
+    } else {
+        trace("rpi_exit: done running threads, back to scheduler\n");
+        rpi_cswitch(&old->saved_sp, scheduler_thread->saved_sp);
+    }
+    // unimplemented();
 }
 
 // yield the current thread.
@@ -126,14 +142,15 @@ void rpi_exit(int exitcode) {
 //      * context switch to the new thread.
 //        make sure to set cur_thread correctly!
 void rpi_yield(void) {
-    rpi_thread_t *old = cur_thread;
 
-    rpi_thread_t *t;
-    if(!(t = Q_pop(&runq)))
+    if(Q_empty(&runq))
         return;
-
-    trace("rpi_yield: switching from %d %d\n", old->tid, t->tid);
-    unimplemented();
+    
+    rpi_thread_t *old = cur_thread;
+    Q_append(&runq, old);
+    cur_thread = Q_pop(&runq);
+    trace("rpi_yield: switching from %d %d\n", old->tid, cur_thread->tid);
+    rpi_cswitch(&old->saved_sp, cur_thread->saved_sp);
 }
 
 /*
@@ -143,20 +160,23 @@ void rpi_yield(void) {
  * so that context switching works correctly.   your code
  * should work even if the runq is empty.
  */
-void rpi_thread_start(void) {
+void rpi_thread_start(void)
+{
+    scheduler_thread = th_alloc();
     trace("scheduler thread=%p\n", scheduler_thread);
-
+    cur_thread = Q_pop(&runq);
     // no other runnable thread: return.
-    if(Q_empty(&runq))
-        goto end;
 
-    unimplemented();
-
-end:
+    if (cur_thread)
+    {
+        rpi_cswitch(&scheduler_thread->saved_sp, cur_thread->saved_sp);
+    }
+    else
+    {
+        printk("No threads!\n");
+    }
     trace("done with all threads, returning\n");
 }
-
-
 
 // helper routine: can call from assembly with r0=sp and it
 // will print the stack out.  it then exits.
@@ -175,16 +195,16 @@ void rpi_print_regs(uint32_t *sp) {
         unsigned r = i == 8 ? 14 : i + 4;
         printk("sp[%d]=r%d=%x\n", i, r, sp[i]);
     }
-    clean_reboot();
+    // clean_reboot();
 }
 
 
 // block caller until thread <th> completes.
 //
 // add the current thread to a list in the thread.
-void rpi_wait(rpi_thread_t *th) {
-    unimplemented();
-}
+// void rpi_wait(rpi_thread_t *th) {
+//     unimplemented();
+// }
 
 // put the current thread on a blocked queue: resume in 
 // exactly // <usec> micro-seconds.  not before, not after.

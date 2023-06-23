@@ -11,6 +11,7 @@ PROG_OBJS := $(foreach obj, $(PROG_OBJS), ./$(notdir $(obj)))
 PROGS := $(patsubst %.o, ./%, $(PROG_OBJS))
 
 # grab all .c files in the current directory
+# REAL_SRC := $(wildcard ./*.c)
 SRC :=  $(REAL_SRC) $(wildcard ./*.c)
 OBJS := $(patsubst %.c, %.o, $(SRC))
 OBJS := $(foreach obj, $(OBJS), ./$(notdir $(obj)))

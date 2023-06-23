@@ -44,6 +44,9 @@ void check_rfe(unsigned a0, unsigned sp, unsigned lr) {
     clean_reboot();
 }
 
+void print_reg(uint32_t reg) {
+    output("\the lr is %x\n", reg);
+}
 void notmain(void) {
     debug("mode=%s\n", mode_str(cpsr_get()));
     test_srs();

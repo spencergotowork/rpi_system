@@ -18,7 +18,7 @@
 static inline uint32_t fast_hash_inc32(const void * _data, uint32_t len, uint32_t hash) {
     const char * data = (const void*)_data;
     uint32_t tmp;
-    int rem;
+    // int rem;
 
 //    assert(len % 4 == 0 && data);
     len >>= 2;

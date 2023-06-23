@@ -23,7 +23,8 @@ MK_FN(write_regs_to_stack)
     mov lr, #14
 
     @ push the registers and save the stack pointer.
-
+    push {r4-r11, lr}
+    str sp, [r0]
     
     bl after_writing_regs
     NOTREACHED

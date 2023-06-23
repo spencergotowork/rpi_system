@@ -17,6 +17,10 @@ void notmain(void) {
         (uint32_t)notmain, 
     };
 
+    // printk("the vector is %x\n", vector);
+    // printk("the vector[1] is %x\n", vector[1]);
+    // printk("the &vector[1] is %x\n", &vector[1]);
+
     printk("setting vector base: should be ok\n");
     vector_base_set(vector);
     printk("setting vector base: should fail\n");

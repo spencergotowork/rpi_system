@@ -166,5 +166,18 @@ static inline uint32_t mod_pow2_ptr(void *x, uint32_t n) {
 // turn off all the output from mmu helpers
 void mmu_be_quiet(void);
 
+// 3-68: fault address register: hold the MVA that the fault occured at.
+static inline uint32_t far_get(void) {
+    uint32_t ret;
+    asm volatile("mrc p15, 0, %0, c6, c0, 0" : "=r"(ret));
+    return ret;
+}
+
+// see 3-65 (page 198 in my arm1176.pdf)
+static inline uint32_t dfsr_get(void) {
+    uint32_t ret;
+    asm volatile("mrc p15, 0, %0, c5, c0, 0" : "=r"(ret));
+    return ret;
+}
 
 #endif

@@ -1,4 +1,4 @@
-USE_LOCAL_KMALLOC = ./kmalloc.c
+# USE_LOCAL_KMALLOC = ./kmalloc.c
 OPT_LEVEL = -O2
 
 # the tests you want to run: can list them out.

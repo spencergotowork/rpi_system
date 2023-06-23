@@ -1,7 +1,9 @@
 // handle a store to address 0 (null)
 #include "rpi.h"
 #include "vector-base.h"
+#include "debug-fault.h"
 #include "armv6-debug-impl.h"
+#include "rpi-interrupts.h"
 
 static int load_fault_n, store_fault_n;
 
@@ -34,7 +36,13 @@ void notmain(void) {
     // 1. install exception handlers using vector base.
     //      must have an entry for data-aborts that has
     //      a valid trampoline to call <data_abort_vector>
-    unimplemented();
+    // unimplemented();
+    // extern unsigned _interrupt_table;
+    // printk("the addr of <int_vector_addr> is %x\n", &_interrupt_table);
+    // int_init_reg(&_interrupt_table);
+    int_init();
+    // watchpt_set0(NULL, data_abort_vector);
+
 
     // 2. enable the debug coprocessor.
     cp14_enable();
@@ -52,8 +60,11 @@ void notmain(void) {
     // setup watchpoint 0.  needs two registers.
     //  - see 13-17 for how to set bits in the <wcr0>
 
-    uint32_t b = 0;  // set this to the needed bits in wcr0
-    unimplemented();
+    // uint32_t wcr0 = cp14_wcr0_get(); // set this to the needed bits in wcr0
+    cp14_wvr0_set(null);
+    // unimplemented();
+    cp14_wcr0_enable();
+    uint32_t wcr0 = cp14_wcr0_get();
 
     assert(cp14_wcr0_is_enabled());
     trace("set watchpoint for addr %p\n", null);
@@ -65,7 +76,7 @@ void notmain(void) {
         panic("did not see a store fault\n");
 
     assert(!cp14_wcr0_is_enabled());
-    cp14_wcr0_set(b);
+    cp14_wcr0_set(wcr0);
     assert(cp14_wcr0_is_enabled());
 
     trace("should see a load fault!\n");

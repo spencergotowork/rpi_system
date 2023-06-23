@@ -100,6 +100,7 @@ void rpi_stack_check(void);
 // do some internal consistency checks --- used for testing.
 void rpi_internal_check(void);
 
+void rpi_print_regs(uint32_t *sp);
 #if 0
 void rpi_wait(rpi_cond_t *c, lock_t *l);
 

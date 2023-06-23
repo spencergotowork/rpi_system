@@ -61,4 +61,7 @@ void gpio_write(unsigned pin, unsigned v);
 // return the value of <pin>.
 int gpio_read(unsigned pin);
 
+// add reboot
+void reboot(void);
+
 #endif

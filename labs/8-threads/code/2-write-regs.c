@@ -24,9 +24,9 @@ enum {
 };
 
 // <sp> = current value of the stack pointer.
-void after_writing_regs(uint32_t *sp) {
+void after_writing_regs(uint32_t *sp1) {
+    uint32_t *sp = (uint32_t *)(*sp1);
     printk("sp=%p, *stored_sp=%p\n", sp, stored_sp);
-
     // check that you store the sp to a pointer correctly.
     assert(stored_sp == sp);
 

@@ -13,7 +13,10 @@ void notmain(void) {
     output("mem_nbytes = %d [mb=%d]\n", nbytes, mb);
 
     // get the memsize using mboxes and corss check
-    unimplemented();
+    // unimplemented();
+    kmalloc_init();
+    uint32_t size = rpi_get_memsize();
+    output("mailbox physical mem: size=%d (%dMB)\n", size, size/OneMB);
 
     if(mb != expected_MB)
         panic("error: expected %dMB, have %d\n", expected_MB, mb);

@@ -1,4 +1,4 @@
-NAME = 0-test-vector-base
+# NAME = 0-test-vector-base
 NAME = 1-test-error
 
 # define this if you need to give the device for your pi

@@ -1,0 +1,12 @@
+{
+    "files.associations": {
+        "rpi.h": "c",
+        "fake-pi.h": "c",
+        "type_traits": "c",
+        "trace.h": "c",
+        "gpio.h": "c",
+        "stdint.h": "c",
+        "staff-crc32.h": "c",
+        "simple-boot-defs.h": "c"
+    }
+}

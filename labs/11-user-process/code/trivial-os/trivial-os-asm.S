@@ -94,7 +94,9 @@ part2_single_step_vec:
 
 @ setup and call prefetch_abort_equiv_pc (look at the single step)
 prefetch_handler_equiv_pc:
-    asm_not_implemented()
+    @ asm_not_implemented()
+    sub   lr, lr, #4
+    TRAMPOLINE(prefetch_abort_equiv_pc)
 
 @ have a single step handler for prefetch abort.
 @ have a equiv handler for prefetch abort.
@@ -117,7 +119,33 @@ part3_equiv_pc_vec:
 
 @ setup and call prefetch_abort_equiv
 prefetch_handler_equiv:
-    asm_not_implemented()
+    @ asm_not_implemented()
+    sub   lr, lr, #4
+    mov   sp, #STACK_ADDR2   
+    stm   sp!, {r0-r12, r14-r15}
+
+    @ add args
+    @mov   r0, sp
+    sub   r0, sp, #52
+    mrs   r1, spsr
+    mov   r2, lr            
+    bl    prefetch_abort_equiv;       
+
+    @ recover   
+    
+    ldm   sp!, {r0-r12, r14-r15}
+    movs  pc, lr
+
+   @ mov sp, #STACK_ADDR2;
+   @ stm   sp ,{r0-r13}
+    
+   @ mov   r0, sp
+   @ mrs   r1, spsr
+   @ mov   r2, lr
+   @ bl    prefetch_abort_equiv
+
+   @ ldm   sp,{r0-r13}
+   @ movs    pc, lr
 
 @ have a single step handler for prefetch abort.
 @ have a equiv handler for prefetch abort.
@@ -145,4 +173,10 @@ MK_FN(user_mode_run_fn)
     @ flush the state  (see rpi-asm.h)
     @
     @ for later, you should clear all the registers.
-    asm_not_implemented()
+    @ asm_not_implemented()
+
+    cps #0x10    @就是0b10000  5bits
+
+    prefetch_flush(r2)
+    mov sp, r1
+    blx r0

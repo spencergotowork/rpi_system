@@ -18,6 +18,8 @@ void simple_boot(int fd, const uint8_t *buf, unsigned n) {
     // if you want to trace PUT/GET set
     //  trace_p = 1;
 
+    if(pi_roundup(n,4) % 4 != 0)
+        panic("boot code size (%d bytes) is not a multiple of 4!\n", n);
     // all implementations should have the same message: same bytes,
     // same crc32: cross-check these values to detect if your <read_file> 
     // is busted.
@@ -44,17 +46,33 @@ void simple_boot(int fd, const uint8_t *buf, unsigned n) {
     } 
 
     // 1. reply to the GET_PROG_INFO
-    unimplemented();
-
+    // unimplemented();
+    uint32_t code_crc = crc32(buf, n);
+    trace_put32(fd, PUT_PROG_INFO);
+    trace_put32(fd, ARMBASE);
+    trace_put32(fd, n);
+    trace_put32(fd, code_crc);
+    // output("1 has run");
     // 2. drain any extra GET_PROG_INFOS
-    unimplemented();
-
+    // unimplemented();
+    while((op = get_op(fd)) == GET_PROG_INFO) {
+        output("received GET_PROG_INFO : discarding.\n");
+        // have to remove just one byte since if not aligned, stays not aligned
+    } 
+    // output("2 has run");
     // 3. check that we received a GET_CODE
-    unimplemented();
-
+    // unimplemented();
+    demand(op == GET_CODE, expected GET_CODE op from pi);
+    ck_eq32(fd, "CRC mismatch", code_crc, get_op(fd));
+    // output("3 has run");
     // 4. handle it: send a PUT_CODE + the code.
-    unimplemented();
-
+    // unimplemented();
+    trace_put32(fd, PUT_CODE);
+    for(int i =0;i<n; i++) {
+        // trace_put8(fd, buf[i]);
+        put_uint8(fd, buf[i]);
+    }
+    // output("4 has run");
     // 5. Wait for BOOT_SUCCESS
     ck_eq32(fd, "BOOT_SUCCESS mismatch", BOOT_SUCCESS, get_op(fd));
     output("bootloader: Done.\n");

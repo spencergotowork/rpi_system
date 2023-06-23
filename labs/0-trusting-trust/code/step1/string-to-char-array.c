@@ -5,5 +5,9 @@
 
 int main(void) { 
     // put your code here.
+    char str[30];
+    gets(str1);
+
+
 	return 0;
 }

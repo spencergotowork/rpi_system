@@ -65,7 +65,9 @@ int main(int argc, char *argv[]) {
     // 5. echo output from pi
     if(!exec_argv)
         pi_cat(fd, dev_name);
-    else
+    else{
         panic("should not have an -exec yet\n");
+    }
+        
 	return 0;
 }

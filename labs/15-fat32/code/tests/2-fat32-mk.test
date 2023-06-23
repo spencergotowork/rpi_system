@@ -1,0 +1,2 @@
+ ERROR: Timeout waiting for ready to read
+PANIC:pi-sd.c:pi_sd_read:20:could not read from sd card: result = 0

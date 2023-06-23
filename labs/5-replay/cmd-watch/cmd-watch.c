@@ -26,6 +26,22 @@
 #define _SVID_SOURCE
 #include <dirent.h>
 
+static int filter(const struct dirent *d) {
+    // scan through the prefixes, returning 1 when you find a match.
+    // 0 if there is no match.
+    // unimplemented();
+    char *suffixes[] = { ".c", ".h", ".S", "Makefile", 0 };
+    const char *file_name = d->d_name;
+   
+    int index = 0;
+    for(int i =0 ;i < sizeof(suffixes); i++){
+        if(strstr(d->d_name, suffixes)) 
+            return 1;
+    }
+        
+    return 0;
+}
+
 // scan the files in "./" (you can extend this) for those
 // that match the suffixes in <suffixes> and check  if any
 // have changed since the last time.
@@ -34,9 +50,32 @@ int check_activity(void) {
     const char *dirname = ".";
     int changed_p = 0;
 
-    static time_t last_mtime;   // store last modification time.
+    static time_t last_mtime = 0;   // store last modification time.
 
-    unimplemented();
+    // unimplemented();
+    int nummatches;
+    struct dirent **entries;
+    if ((nummatches = scandir(dirname, &entries, filter, alphasort)) < 0) {
+        printf("scanner pains\n");
+        exit(1);
+    }
+    // check that there's at least one element
+    if (nummatches == 0) {
+        printf("sadge %d matches\n", nummatches);
+        return changed_p;
+    }
+    
+    int len = sizeof(entries)/sizeof(entries[0]);
+    for(int i = 0;i<len;i++) {
+        struct stat s1;
+        char *file_name = get_dev_filepath((*entries)->d_name);
+    }
+    
+    if (stat(file_name, &s1) < 0) {
+        printf("check_activity: file_name stat failed\n");
+        exit(1);
+    }
+
 
     // return 1 if anything that matched <suffixes>
     return changed_p;
@@ -45,7 +84,17 @@ int check_activity(void) {
 // synchronously wait for <pid> to exit.  returns 1 if it exited
 // cleanly (via exit(0)), 0 otherwise.
 static int pid_clean_exit(int pid) {
-    unimplemented();
+    // unimplemented();
+    int status;
+	debug("testing <waitpid(pid, &status, 0)>\n");
+	if(waitpid(pid, &status, 0) < 0)
+		sys_die(waitpid, waitpid failed?);
+	status = WEXITSTATUS(status);
+	debug("\tkid=%d exited with %d\n\n", pid, status);
+	if(status == 0)
+        return 1;
+    else
+        return 0;
 }
 
 // simple helper to print null terminated vector of strings.
@@ -63,7 +112,8 @@ static void print_argv(char *argv[]) {
 // and exit if the kid crashed or exited with an error (a non-zero
 // exit code).
 static void run(char *argv[]) {
-    unimplemented();
+    // unimplemented();
+
 }
 
 int main(int argc, char *argv[]) {

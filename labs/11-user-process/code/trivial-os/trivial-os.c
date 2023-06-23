@@ -25,7 +25,7 @@ enum {
     PART3_RUN_PC_EQUIV,
     PART4_RUN_REG_EQUIV
 };
-static int part = 5;
+static int part = 4;
 //static int part = PART2_RUN_SINGLE; // PART4_RUN_REG_EQUIV;
 // static int part = PART4_RUN_REG_EQUIV;
 //static int part = PART3_RUN_PC_EQUIV;
@@ -42,7 +42,7 @@ static const char *prog_name = "hello";
 
 // kernel level side
 uint32_t do_syscall(uint32_t sysnum, uint32_t a0, uint32_t a1, uint32_t a2) {
-    sys_debug("syscall=%d, a0=%x,a1=%x,a2=%x\n", sysnum, a0,a1,a2);
+    // sys_debug("syscall=%d, a0=%x,a1=%x,a2=%x\n", sysnum, a0,a1,a2);
     switch(sysnum) {
     case SYS_PUT_HEX: 
         if(sys_verbose_p) printk("USER: %x\n", a0);  
@@ -52,6 +52,12 @@ uint32_t do_syscall(uint32_t sysnum, uint32_t a0, uint32_t a1, uint32_t a2) {
         if(sys_verbose_p) printk("USER: %c\n", a0);  
         else printk("%c", a0);
         return 0;
+    case SYS_GET_CPSR: 
+        // uint32_t cpsr = cpsr_get();
+        // printk("the cpsr is %x\n", cpsr_get());
+        // if(sys_verbose_p) printk("USER: %u\n", cpsr_get());  
+        // else printk("%x\n", cpsr_get());
+        return spsr_get();
     case SYS_EXIT: 
         printk("%s: sys_exit(%d): going to reboot\n", prog_name, a0);
         printk("part=%d\n", part);
@@ -62,6 +68,12 @@ uint32_t do_syscall(uint32_t sysnum, uint32_t a0, uint32_t a1, uint32_t a2) {
     }
 }
 
+void print_mode() {
+    printk("the mode value is %x\n", cpsr_get());
+}
+void print_reg(uint32_t reg) {
+    printk("the reg value is %x\n", reg);
+}
 void notmain(void) {
     extern uint8_t part1_swi_vec, part2_single_step_vec, part3_equiv_pc_vec,
         part4_equiv_vec;

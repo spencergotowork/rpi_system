@@ -7,6 +7,7 @@
 #include "rpi.h"
 #include "vector-base.h"
 #include "armv6-debug-impl.h"
+#include "rpi-interrupts.h"
 
 // the routine we fault on: we don't want to use GET32 or PUT32
 // since that would break printing.
@@ -57,7 +58,8 @@ void prefetch_abort_vector(unsigned lr) {
 void notmain(void) {
     // 1. install exception handlers: must have a valid trampoline for
     // prefetch_abort_vector
-    unimplemented();
+    // unimplemented();
+    int_init();
 
     // 2. enable the debug coprocessor.
     cp14_enable();
@@ -79,7 +81,9 @@ void notmain(void) {
             BCR[0] = 1
         prefetch flush.
     */
-
+//    trace("the b value is %x\n", cp14_bcr0_get());
+    cp14_bcr0_enable();
+    
     /* 
      * see 13-17 for how to set bits
      * set:
@@ -90,12 +94,12 @@ void notmain(void) {
      *   - supervisor or not
      *   - enabled.
      */
-    uint32_t b = 0;
-
+    uint32_t b = cp14_bcr0_get();
 
     // set breakpoint using bcr0 and bvr0
-    unimplemented();
-
+    // unimplemented();
+    cp14_bvr0_set((uint32_t)foo);
+    
     assert(cp14_bcr0_is_enabled());
     output("set breakpoint for addr %p\n", foo);
 

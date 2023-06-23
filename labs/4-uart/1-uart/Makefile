@@ -1,6 +1,6 @@
 # simple test that you have your path defined.
-NAME = hello
-
+# NAME = hello
+NAME = hello-disable
 # uncomment this to use the uart.c in the current directory.
 UART = # uart.o
 
@@ -8,7 +8,7 @@ OBJS = $(NAME).o $(UART)
 
 # check that your path is defined.
 ifndef CS140E_2022_PATH
-$(error CS140E_2021_PATH is not set: this should contain the absolute path to where this directory is.  Define it in your shell's initialiation.  For example, .tcshrc for tcsh or .bashrc for bash)
+$(error CS140E_2022_PATH is not set: this should contain the absolute path to where this directory is.  Define it in your shell's initialiation.  For example, .tcshrc for tcsh or .bashrc for bash)
 endif
 
 include $(CS140E_2022_PATH)/libpi/defs.mk

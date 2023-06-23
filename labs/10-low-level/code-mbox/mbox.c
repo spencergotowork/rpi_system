@@ -42,8 +42,16 @@ uint32_t rpi_get_memsize(void) {
         u = kmalloc_aligned(8*4,16);
     memset((void*)u, 0, 8*4);
 
-    unimplemented();
-
+    // unimplemented();
+    u[0] = 8*4;   // total size in bytes.
+    u[1] = 0;   // always 0 when sending.
+    // serial tag
+    u[2] = 0x00010005;
+    u[3] = 8;   // response size size
+    u[4] = 0;   // request size
+    u[5] = 0;   // base address in bytes
+    u[6] = 0;   // size in bytes
+    u[7] = 0;   // end tag
 
     mbox_send(MBOX_CH, u);
     demand(u[5] == 0, "expected 0 base, have %d\n", u[5]);
@@ -106,7 +114,17 @@ uint32_t rpi_clock_hz_set(uint32_t clock, uint32_t hz) {
         u = kmalloc_aligned(9*4,16);
     memset((void*)u, 0, 9*4);
 
-    unimplemented();
+    // unimplemented();
+    u[0] = 9*4;   // total size in bytes.
+    u[1] = 0;   // always 0 when sending.
+    // serial tag
+    u[2] = 0x00038002;
+    u[3] = 8;   // response size size
+    u[4] = 12;   // request size
+    u[5] = clock;   // clock id
+    u[6] = hz;   // clock hz
+    u[7] = 1;   
+    u[8] = 0;   // end tag
 
     mbox_send(MBOX_CH, u);
     return u[6];
@@ -120,7 +138,16 @@ uint32_t rpi_clock_curhz_get(uint32_t clock) {
         u = kmalloc_aligned(8*4,16);
     memset((void*)u, 0, 8*4);
 
-    unimplemented();
+    // unimplemented();
+    u[0] = 8*4;   // total size in bytes.
+    u[1] = 0;   // always 0 when sending.
+    // serial tag
+    u[2] = 0x00030002;
+    u[3] = 8;   // response size size
+    u[4] = 4;   // request size
+    u[5] = clock;   // clock id
+    u[6] = 0;   // clock hz
+    u[7] = 0;   // end tag
 
     mbox_send(MBOX_CH, u);
     return u[6];
@@ -143,7 +170,15 @@ uint32_t rpi_get_model(void) {
         u = kmalloc_aligned(7*4,16);
     memset((void*)u, 0, 7*4);
 
-    unimplemented();
+    // unimplemented();
+    u[0] = 7*4;   // total size in bytes.
+    u[1] = 0;   // always 0 when sending.
+    // serial tag
+    u[2] = 0x00010001;
+    u[3] = 4;   // response size size
+    u[4] = 0;   // request size
+    u[5] = 0;   // board model
+    u[6] = 0;   // end tag
 
     mbox_send(MBOX_CH, u);
     return u[5];
@@ -156,7 +191,15 @@ uint32_t rpi_get_revision(void) {
         u = kmalloc_aligned(7*4,16);
     memset((void*)u, 0, 7*4);
 
-    unimplemented();
+    // unimplemented();
+    u[0] = 7*4;   // total size in bytes.
+    u[1] = 0;   // always 0 when sending.
+    // serial tag
+    u[2] = 0x00010002;
+    u[3] = 4;   // response size size
+    u[4] = 0;   // request size
+    u[5] = 0;   // board model
+    u[6] = 0;   // end tag
 
     mbox_send(MBOX_CH, u);
     return u[5];

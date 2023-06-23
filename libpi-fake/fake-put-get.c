@@ -134,8 +134,8 @@ uint32_t GET32(uint32_t addr) {
 // don't need to do anything.  would be better to not have
 // delay() in the header so we could do our own version and
 // (for example) print out the number of ticks used.
-void (nop)(void) {
-}
+// void (nop)(void) {
+// }
 
 // don't even trACK
 uint32_t DEV_VAL32(uint32_t x) { return x; }

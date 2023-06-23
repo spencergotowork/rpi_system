@@ -2,6 +2,9 @@
 
 // of all the code/data in a pi binary file.
 extern char __heap_start__;
+static void *alloc_top;
+static void *alloc_start;
+static unsigned max_bytes;
 
 // track if initialized.
 static int init_p;
@@ -49,7 +52,11 @@ static inline unsigned roundup(unsigned x, unsigned n) {
 void *kmalloc(unsigned nbytes) {
     assert(nbytes);
     demand(init_p, calling before initialized);
-    unimplemented();
+    // unimplemented();
+    assert(nbytes <= max_bytes);
+    void *ret = alloc_top;
+    alloc_top += roundup(nbytes, 4);
+    return ret;
 }
 
 /*
@@ -63,7 +70,9 @@ void *kmalloc_aligned(unsigned nbytes, unsigned alignment) {
 
     if(alignment <= 4)
         return kmalloc(nbytes);
-    unimplemented();
+    // unimplemented();
+    alloc_top = (void*)roundup((unsigned)alloc_top, alignment);
+    return kmalloc(nbytes);
 }
 
 /*
@@ -73,7 +82,11 @@ void *kmalloc_aligned(unsigned nbytes, unsigned alignment) {
 void kmalloc_init_set_start(unsigned _addr, unsigned max_nbytes) {
     demand(!init_p, already initialized);
     init_p = 1;
-    unimplemented();
+    // unimplemented();
+    alloc_start = (void *)_addr;
+    alloc_top = (void *)_addr;
+    max_bytes = max_nbytes;
+    demand(is_aligned_ptr(alloc_top, sizeof(union align)), ensure aligned to union align);
 }
 
 /*
@@ -88,10 +101,10 @@ void kmalloc_init_set_start(unsigned _addr, unsigned max_nbytes) {
 void kmalloc_init(void) {
     if(init_p)
         return;
-    init_p = 1;
 
     // call kmalloc_init_set_start w/ right values.
-    unimplemented();
+    // unimplemented();
+    kmalloc_init_set_start((unsigned)(&__heap_start__), 2 * 1024 * 1024);
 }
 
 
@@ -100,7 +113,8 @@ void kmalloc_init(void) {
  * pointer back to the beginning.
  */
 void kfree_all(void) {
-    unimplemented();
+    // unimplemented();
+    alloc_top = alloc_start;
 }
 
 // return pointer to the first free byte.
@@ -109,5 +123,6 @@ void kfree_all(void) {
 //    assert(<addr> < kmalloc_heap_ptr());
 // 
 void *kmalloc_heap_ptr(void) {
-    unimplemented();
+    // unimplemented();
+    return alloc_start;
 }

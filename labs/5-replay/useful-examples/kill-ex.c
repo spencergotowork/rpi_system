@@ -42,8 +42,9 @@ int main(void) {
     if(signal(SIGPIPE, SIG_IGN) < 0)
         sys_die(signal, cannot install sigpipe);
 
-    if(signal(SIGUSR1, catch_siguser) < 0)
+    if(signal(SIGUSR1, catch_siguser) < 0) {
         sys_die(signal, cannot install siguser);
+    }
 
 	if(!(pid=fork())) {
         // if you get rid of this both processes will get a control-c and the 
